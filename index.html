@@ -196,7 +196,21 @@ document.getElementById('orderForm').addEventListener('submit',e=>{
  const idx=orders.findIndex(x=>x.id===id);if(idx>=0)orders[idx]=o;else orders.push(o);persist();closeModal();render();saveToCloud(o);
 });
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function dateDisplay(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-PH',{day:'2-digit',month:'short',year:'numeric'})}
+
+function dateDisplay(value) {
+  const s = normalizeDate(value);
+  if (!s) return '—';
+
+  const [year, month, day] = s.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+
+  return d.toLocaleDateString('en-PH', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
 function detailCell(o){return `<div class="detail"><b>${esc(o.name||'Unnamed customer')}</b><br><span class="sub">${esc(o.contact1||'No contact')}</span>${o.contact2?`<br><span class="sub">${esc(o.contact2)}</span>`:''}<br>${o.address?`<span>${esc(o.address)}</span><br>`:''}<span class="sub">Payment: ${esc(o.payment||'—')}</span></div>`}
 function orderCell(o){return `<div class="detail"><b>${esc(o.setType||'No set specified')}</b>${o.changes?`<br><span>Changes: ${esc(o.changes)}</span>`:''}${o.notes?`<br><span class="sub">Notes: ${esc(o.notes)}</span>`:''}</div>`}
 function row(o){return `<tr><td class="date-cell">${dateDisplay(o.date)}<small>${o.date===localDateString()?'Today':''}</small></td><td>${detailCell(o)}</td><td>${orderCell(o)}</td><td class="money">${money(o.downpayment)}</td><td class="money">${money(o.balance)}</td><td class="courier-cell">${esc(o.courier||'—')}</td><td class="seller-cell">${esc(o.seller||'—')}</td><td class="status-cell"><span class="pill ${o.status==='Delivered'?'delivered':''}">${esc(o.status)}</span></td><td><div class="row-actions"><button class="btn btn-outline mini" onclick="openModal('${o.id}')">Edit</button><button class="btn btn-danger mini" onclick="deleteOrder('${o.id}')">Delete</button></div></td></tr>`}
