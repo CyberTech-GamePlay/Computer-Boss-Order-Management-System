@@ -16,6 +16,7 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
 .table-wrap{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px #10243a08}.table-scroll{overflow:auto;max-height:68vh}table{width:100%;border-collapse:separate;border-spacing:0;min-width:1450px}thead th{position:sticky;top:0;background:#edf4fb;color:#30465d;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.045em;padding:14px 12px;border-bottom:1px solid var(--line);z-index:2}tbody td{padding:12px;border-bottom:1px solid #edf0f4;vertical-align:top;font-size:12px;min-width:100px}tbody tr:hover{background:#f9fbfe}tbody tr:last-child td{border-bottom:0}.date-cell{min-width:125px;font-weight:750}.date-cell small{display:block;color:var(--muted);font-weight:500;margin-top:4px}.detail{min-width:190px;line-height:1.55}.detail b{color:#243b53}.detail .sub{color:var(--muted)}.money{min-width:100px;font-weight:750;white-space:nowrap}.courier-cell,.seller-cell,.status-cell{min-width:145px}.pill{display:inline-block;border-radius:99px;padding:5px 9px;font-weight:750;font-size:11px;background:var(--amberbg);color:var(--amber)}.pill.delivered{background:var(--greenbg);color:var(--green)}.row-actions{display:flex;gap:5px;white-space:nowrap}.mini{padding:6px 8px;font-size:11px;border-radius:7px}
 .section-title{display:flex;align-items:center;gap:10px;margin:30px 0 12px}.section-title h2{font-size:18px;margin:0}.section-title span{background:#e5eaf0;color:#475467;border-radius:99px;padding:4px 9px;font-size:12px;font-weight:750}.closed-note{font-size:12px;color:var(--muted);margin:-4px 0 12px}.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px}
 .modal-backdrop{position:fixed;inset:0;background:#0b1728a8;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-backdrop.open{display:flex}.modal{width:min(900px,100%);max-height:92vh;overflow:auto;background:white;border-radius:16px;box-shadow:0 20px 70px #0004}.modal-head{padding:19px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f0f3f7;border-radius:8px;padding:7px 11px;cursor:pointer}.form-grid{padding:20px 22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#475467}.field input,.field select,.field textarea{width:100%;border:1px solid #d5dde7;border-radius:8px;padding:10px 11px;font:inherit;font-size:13px;background:white;min-width:0}.field textarea{resize:vertical;min-height:74px}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #b8dcff;border-color:var(--blue)}.modal-foot{padding:15px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:9px;position:sticky;bottom:0;background:white}.hint{font-size:11px;color:var(--muted);margin-top:4px}
+input[readonly]{background-color:#f4f6f8;color:#555;cursor:not-allowed}
 @media(max-width:800px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:17px}}
 @media(max-width:520px){header{padding:18px 14px}.header-actions{width:100%}.header-actions .btn{flex:1}main{padding:16px 10px}.form-grid{grid-template-columns:1fr;padding:16px}.field.full{grid-column:auto}.modal-head,.modal-foot{padding:14px 16px}.summary{gap:8px}.stat{padding:13px}.stat .num{font-size:22px}.filters{width:100%}.filters input{flex:1;min-width:0;width:100%}}
 @media print{header,.toolbar,.header-actions,.filters,.row-actions,.modal-backdrop{display:none!important}body{background:white}main{padding:0}.table-wrap{border:0;box-shadow:none}.table-scroll{overflow:visible;max-height:none}table{min-width:0;font-size:9px}thead th,tbody td{padding:5px;font-size:8px;position:static}.summary{grid-template-columns:repeat(4,1fr)}.section-title{margin-top:15px}}
@@ -35,10 +36,10 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
   <div class="stat"><div class="label">Today's Downpayments</div><div class="num" id="dpTotal">₱0.00</div><small>Based on today's orders</small></div>
  </section>
  <div class="toolbar"><h2>Active Orders</h2><div class="filters"><input id="search" placeholder="Search customer, contact, order..." oninput="render()"><input id="filterDate" type="date" title="Filter by order date" onchange="render()"><select id="filterStatus" onchange="render()"><option value="">All statuses</option><option>Ongoing</option><option>Item Received</option></select><button class="btn btn-outline" onclick="clearFilters()">Clear filters</button></div></div>
- <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="activeRows"></tbody></table><div class="empty" id="activeEmpty" hidden>No active orders match your filters.</div></div></div>
+ <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Invoice Amount</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="activeRows"></tbody></table><div class="empty" id="activeEmpty" hidden>No active orders match your filters.</div></div></div>
  <div class="section-title"><h2>Closed Transaction</h2><span id="closedCount">0</span></div>
  <p class="closed-note">Item Received orders from previous dates are automatically listed here. Item Received orders dated today remain above so you can monitor today's sales.</p>
- <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="closedRows"></tbody></table><div class="empty" id="closedEmpty" hidden>No closed transactions yet.</div></div></div>
+ <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Invoice Amount</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="closedRows"></tbody></table><div class="empty" id="closedEmpty" hidden>No closed transactions yet.</div></div></div>
 </main>
 <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -46,7 +47,7 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
   <form id="orderForm">
    <input type="hidden" id="orderId">
    <div class="form-grid">
-    <div class="field"><label for="date">Order Date</label><input id="date" type="date" required><div class="hint">Use the calendar to select day, month, and year.</div></div>
+    <div class="field"><label for="date">Order Date</label><input id="date" type="date" required><div class="hint">Use calendar selector.</div></div>
     <div class="field"><label for="name">Customer Name</label><input id="name" required placeholder="Full name"></div>
     <div class="field"><label for="contact1">Contact No. 1</label><input id="contact1" type="tel" placeholder="Primary contact"></div>
     <div class="field"><label for="contact2">Contact No. 2</label><input id="contact2" type="tel" placeholder="Optional contact"></div>
@@ -55,9 +56,9 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
     <div class="field"><label for="setType">Type of Set</label><input id="setType" placeholder="e.g. Ryzen 5 PC Set / Laptop"></div>
     <div class="field"><label for="changes">Changes</label><input id="changes" placeholder="Upgrades or modifications"></div>
     <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="Special instructions, inclusions, etc."></textarea></div>
-    <div class="field"><label for="invoiceAmount">Invoice Amount (₱)</label><input id="invoiceAmount" type="number" min="0" step="0.01" value="0"></div>
-    <div class="field"><label for="downpayment">Downpayment (₱)</label><input id="downpayment" type="number" min="0" step="0.01" value="0"></div>
-    <div class="field"><label for="balance">Balance (₱)</label><input id="balance" type="number" min="0" step="0.01" value="0"></div>
+    <div class="field"><label for="invoiceAmount">Invoice Amount (₱)</label><input id="invoiceAmount" type="number" min="0" step="0.01" value="0" oninput="calculateBalance()"></div>
+    <div class="field"><label for="downpayment">Downpayment (₱)</label><input id="downpayment" type="number" min="0" step="0.01" value="0" oninput="calculateBalance()"></div>
+    <div class="field"><label for="balance">Balance (₱)</label><input id="balance" type="number" step="0.01" value="0" readonly title="Auto-calculated: Invoice Amount - Downpayment"></div>
     <div class="field"><label for="courier">Courier</label><select id="courier" onchange="toggleOther('courier','courierOther')"><option>Pick up</option><option>JNT Shipping</option><option>Albert</option><option>Kokong</option><option>Angkul Junjun</option><option>Angkul Dennis</option><option>Other</option></select><input id="courierOther" placeholder="Enter courier name" style="display:none;margin-top:6px"></div>
     <div class="field"><label for="seller">Seller Name</label><select id="seller" onchange="toggleOther('seller','sellerOther')"><option>Arianne</option><option>Vicky</option><option>Ralph</option><option>Dennis</option><option>Other</option></select><input id="sellerOther" placeholder="Enter seller name" style="display:none;margin-top:6px"></div>
     <div class="field"><label for="status">Status</label><select id="status"><option>Ongoing</option><option>Item Received</option></select></div>
@@ -70,54 +71,250 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
 const KEY='cbd_order_management_v1';
 const CLOUD_URL_KEY='cbd_order_cloud_url_v1';
 const CLOUD_KEY_KEY='cbd_order_cloud_key_v1';
-let orders=loadOrders().map(o=>({...o,status:o.status==='Preparing'?'Ongoing':o.status==='Delivered'?'Item Received':o.status,invoiceAmount:o.invoiceAmount??(Number(o.downpayment||0)+Number(o.balance||0)),payment:o.payment==='Cash on Delivery (COD)'?'COD':o.payment==='BDO Credit Card Installment'?'CC Installment':o.payment==='Card Swipe'?'Credit Card':o.payment}));
-let cloudBusy=false;
+
+function normalizeOrder(o){
+  const dp = Number(o.downpayment || 0);
+  const bal = Number(o.balance || 0);
+  const rawInv = Number(o.invoiceAmount);
+  // Preserve explicit invoice amount if exists and non-zero, otherwise auto-calculate from DP + Balance
+  const inv = (!isNaN(rawInv) && rawInv > 0) ? rawInv : (dp + bal);
+  return {
+    ...o,
+    status: o.status === 'Preparing' ? 'Ongoing' : o.status === 'Delivered' ? 'Item Received' : o.status,
+    invoiceAmount: inv,
+    downpayment: dp,
+    balance: inv - dp,
+    payment: o.payment === 'Cash on Delivery (COD)' ? 'COD' : o.payment === 'BDO Credit Card Installment' ? 'CC Installment' : o.payment === 'Card Swipe' ? 'Credit Card' : o.payment
+  };
+}
+
+let orders = loadOrders().map(normalizeOrder);
+let cloudBusy = false;
+
 function localDateString(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 function loadOrders(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
 function persist(){localStorage.setItem(KEY,JSON.stringify(orders))}
 function setSyncStatus(message,ok=false){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=message;el.style.background=ok?'#e8f7ef':'#fff3df';el.style.color=ok?'#11663f':'#8a4b00'}
 function cloudConfig(){return {url:(localStorage.getItem(CLOUD_URL_KEY)||'').trim(),key:(localStorage.getItem(CLOUD_KEY_KEY)||'').trim()}}
-function configureCloud(){const c=cloudConfig();const url=prompt('Paste your Google Apps Script Web App URL (ends in /exec):',c.url);if(url===null)return;const key=prompt('Enter the Cloud Sync Access Key you set in Code.gs:',c.key);if(key===null)return;if(!url.trim()||!/^https:\/\/script\.google\.com\/macros\/s\//.test(url.trim())){alert('Please enter a valid Google Apps Script Web App URL ending in /exec.');return}if(!key.trim()){alert('Access key cannot be blank.');return}localStorage.setItem(CLOUD_URL_KEY,url.trim());localStorage.setItem(CLOUD_KEY_KEY,key.trim());syncFromCloud(true)}
-async function cloudRequest(action,data={}){const c=cloudConfig();if(!c.url||!c.key)throw new Error('Cloud sync is not configured on this device.');let response;if(action==='list'){const u=new URL(c.url);u.searchParams.set('action','list');u.searchParams.set('key',c.key);response=await fetch(u.toString(),{method:'GET',redirect:'follow',cache:'no-store'});}else{response=await fetch(c.url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,key:c.key,...data})});}const result=await response.json();if(!result.ok)throw new Error(result.error||'Cloud service returned an error.');return result}
-async function syncFromCloud(showAlert=false){if(cloudBusy)return;const c=cloudConfig();if(!c.url||!c.key){setSyncStatus('Cloud sync not configured — orders are currently saved on this device only.');return}cloudBusy=true;setSyncStatus('Connecting to Google Sheets…');try{const result=await cloudRequest('list');const remote=Array.isArray(result.orders)?result.orders.map(o=>({...o,status:o.status==='Preparing'?'Ongoing':o.status==='Delivered'?'Item Received':o.status,invoiceAmount:o.invoiceAmount??(Number(o.downpayment||0)+Number(o.balance||0)),payment:o.payment==='Cash on Delivery (COD)'?'COD':o.payment==='BDO Credit Card Installment'?'CC Installment':o.payment==='Card Swipe'?'Credit Card':o.payment,paymentType:o.paymentType||(String(o.payment||'').startsWith('CC Installment')?'CC Installment':o.payment)})):[];if(remote.length){orders=remote;persist();render();setSyncStatus(`Cloud sync connected • ${orders.length} order(s) loaded from Google Sheets.`,true)}else if(orders.length){for(const order of orders)await cloudRequest('save',{order});setSyncStatus(`Uploaded ${orders.length} existing local order(s) to Google Sheets.`,true)}else{setSyncStatus('Cloud sync connected • no orders saved yet.',true)}if(showAlert)alert('Cloud sync connected successfully. This device is now using the shared Google Sheet.');}catch(err){setSyncStatus('Cloud sync error: '+err.message+' — local orders have been kept.');if(showAlert)alert('Could not connect to Google Sheets. Check the Web App URL, access key, deployment permissions, and internet connection.\n\nDetails: '+err.message)}finally{cloudBusy=false}}
-async function saveToCloud(order){const c=cloudConfig();if(!c.url||!c.key){setSyncStatus('Saved on this device only. Use Cloud Sync Setup to connect Google Sheets.');return}try{await cloudRequest('save',{order});setSyncStatus('Saved locally and synced to Google Sheets.',true)}catch(err){setSyncStatus('Local save complete, but cloud sync failed: '+err.message+' — use Sync Setup to retry.')}}
+
+function configureCloud(){
+  const c=cloudConfig();
+  const url=prompt('Paste your Google Apps Script Web App URL (ends in /exec):',c.url);
+  if(url===null)return;
+  const key=prompt('Enter the Cloud Sync Access Key set in Code.gs:',c.key);
+  if(key===null)return;
+  if(!url.trim()||!/^https:\/\/script\.google\.com\/macros\/s\//.test(url.trim())){alert('Please enter a valid Google Apps Script Web App URL ending in /exec.');return}
+  if(!key.trim()){alert('Access key cannot be blank.');return}
+  localStorage.setItem(CLOUD_URL_KEY,url.trim());
+  localStorage.setItem(CLOUD_KEY_KEY,key.trim());
+  syncFromCloud(true);
+}
+
+async function cloudRequest(action,data={}){
+  const c=cloudConfig();
+  if(!c.url||!c.key)throw new Error('Cloud sync is not configured on this device.');
+  let response;
+  if(action==='list'){
+    const u=new URL(c.url);
+    u.searchParams.set('action','list');
+    u.searchParams.set('key',c.key);
+    response=await fetch(u.toString(),{method:'GET',redirect:'follow',cache:'no-store'});
+  }else{
+    response=await fetch(c.url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,key:c.key,...data})});
+  }
+  const result=await response.json();
+  if(!result.ok)throw new Error(result.error||'Cloud service returned an error.');
+  return result;
+}
+
+async function syncFromCloud(showAlert=false){
+  if(cloudBusy)return;
+  const c=cloudConfig();
+  if(!c.url||!c.key){setSyncStatus('Cloud sync not configured — orders are saved on this device only.');return}
+  cloudBusy=true;
+  setSyncStatus('Connecting to Google Sheets…');
+  try{
+    const result=await cloudRequest('list');
+    const remote=Array.isArray(result.orders)?result.orders.map(normalizeOrder):[];
+    if(remote.length){
+      orders=remote;
+      persist();
+      render();
+      setSyncStatus(`Cloud sync connected • ${orders.length} order(s) loaded from Google Sheets.`,true);
+    }else if(orders.length){
+      for(const order of orders)await cloudRequest('save',{order});
+      setSyncStatus(`Uploaded ${orders.length} existing local order(s) to Google Sheets.`,true);
+    }else{
+      setSyncStatus('Cloud sync connected • no orders saved yet.',true);
+    }
+    if(showAlert)alert('Cloud sync connected successfully.');
+  }catch(err){
+    setSyncStatus('Cloud sync error: '+err.message+' — local orders retained.');
+    if(showAlert)alert('Could not connect to Google Sheets.\n\nDetails: '+err.message);
+  }finally{
+    cloudBusy=false;
+  }
+}
+
+async function saveToCloud(order){
+  const c=cloudConfig();
+  if(!c.url||!c.key){setSyncStatus('Saved locally. Setup Cloud Sync to backup to Google Sheets.');return}
+  try{
+    await cloudRequest('save',{order});
+    setSyncStatus('Saved locally and synced to Google Sheets.',true);
+  }catch(err){
+    setSyncStatus('Local save complete, but cloud sync failed: '+err.message);
+  }
+}
+
 function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function val(id){return document.getElementById(id).value.trim()}
 function setVal(id,v){document.getElementById(id).value=v??''}
 function toggleOther(selectId,inputId){const show=document.getElementById(selectId).value==='Other';const el=document.getElementById(inputId);el.style.display=show?'block':'none';if(!show)el.value=''}
 function toggleInstallmentMonths(){const show=document.getElementById('payment').value==='CC Installment';const el=document.getElementById('installmentMonths');el.style.display=show?'block':'none';if(!show)el.value=''}
-function openModal(id=null){
- document.getElementById('orderForm').reset();setVal('orderId','');setVal('date',localDateString());setVal('invoiceAmount','0');setVal('downpayment','0');setVal('balance','0');setVal('installmentMonths','');toggleInstallmentMonths();
- document.getElementById('courierOther').style.display='none';document.getElementById('sellerOther').style.display='none';
- document.getElementById('modalTitle').textContent=id?'Edit Order':'Add New Order';
- if(id){const o=orders.find(x=>x.id===id);if(!o)return;for(const k of ['id','date','name','contact1','contact2','address','payment','setType','changes','notes','invoiceAmount','downpayment','balance','status'])setVal(k==='id'?'orderId':k,k==='invoiceAmount'?(o.invoiceAmount??(Number(o.downpayment||0)+Number(o.balance||0))):k==='payment'?(o.paymentType||(/^CC Installment/.test(o.payment||'')?'CC Installment':o.payment)):o[k]);setVal('installmentMonths',o.installmentMonths||(String(o.payment||'').match(/CC Installment\s+(\d+)\s+Months/i)||[])[1]||'');toggleInstallmentMonths();setSelectOther('courier', 'courierOther',o.courier,['Pick up','JNT Shipping','Albert','Kokong','Angkul Junjun','Angkul Dennis','Other']);setSelectOther('seller','sellerOther',o.seller,['Arianne','Vicky','Ralph','Dennis','Other']);}
- document.getElementById('modalBackdrop').classList.add('open');document.body.style.overflow='hidden';
+
+function calculateBalance(){
+  const inv = Number(val('invoiceAmount') || 0);
+  const dp = Number(val('downpayment') || 0);
+  const bal = inv - dp;
+  setVal('balance', bal.toFixed(2));
 }
-function setSelectOther(selectId,inputId,value,options){const select=document.getElementById(selectId);if(options.includes(value)){select.value=value;document.getElementById(inputId).style.display='none'}else{select.value='Other';document.getElementById(inputId).style.display='block';document.getElementById(inputId).value=value||''}}
+
+function openModal(id=null){
+ document.getElementById('orderForm').reset();
+ setVal('orderId','');
+ setVal('date',localDateString());
+ setVal('invoiceAmount','0');
+ setVal('downpayment','0');
+ setVal('balance','0');
+ setVal('installmentMonths','');
+ toggleInstallmentMonths();
+ document.getElementById('courierOther').style.display='none';
+ document.getElementById('sellerOther').style.display='none';
+ document.getElementById('modalTitle').textContent=id?'Edit Order':'Add New Order';
+
+ if(id){
+   const o=orders.find(x=>x.id===id);
+   if(!o)return;
+   for(const k of ['id','date','name','contact1','contact2','address','payment','setType','changes','notes','invoiceAmount','downpayment','balance','status']){
+     if(k==='id') setVal('orderId', o.id);
+     else if(k==='payment') setVal('payment', o.paymentType || (/^CC Installment/.test(o.payment||'') ? 'CC Installment' : o.payment));
+     else setVal(k, o[k]);
+   }
+   setVal('installmentMonths', o.installmentMonths || (String(o.payment||'').match(/CC Installment\s+(\d+)\s+Months/i)||[])[1]||'');
+   toggleInstallmentMonths();
+   setSelectOther('courier', 'courierOther', o.courier, ['Pick up','JNT Shipping','Albert','Kokong','Angkul Junjun','Angkul Dennis','Other']);
+   setSelectOther('seller', 'sellerOther', o.seller, ['Arianne','Vicky','Ralph','Dennis','Other']);
+   calculateBalance();
+ }
+ document.getElementById('modalBackdrop').classList.add('open');
+ document.body.style.overflow='hidden';
+}
+
+function setSelectOther(selectId,inputId,value,options){
+  const select=document.getElementById(selectId);
+  if(options.includes(value)){
+    select.value=value;
+    document.getElementById(inputId).style.display='none';
+  }else{
+    select.value='Other';
+    document.getElementById(inputId).style.display='block';
+    document.getElementById(inputId).value=value||'';
+  }
+}
+
 function closeModal(){document.getElementById('modalBackdrop').classList.remove('open');document.body.style.overflow=''}
+
 document.getElementById('orderForm').addEventListener('submit',e=>{
- e.preventDefault();const id=val('orderId')||String(Date.now());
- const payment=val('payment');const paymentLabel=payment==='CC Installment'?'CC Installment '+(val('installmentMonths')||'')+' Months':payment;const o={id,date:val('date'),name:val('name'),contact1:val('contact1'),contact2:val('contact2'),address:val('address'),payment:paymentLabel,paymentType:payment,installmentMonths:payment==='CC Installment'?Number(val('installmentMonths')||0):null,setType:val('setType'),changes:val('changes'),notes:val('notes'),invoiceAmount:Number(val('invoiceAmount')||0),downpayment:Number(val('downpayment')||0),balance:Number(val('balance')||0),courier:val('courier')==='Other'?val('courierOther'):val('courier'),seller:val('seller')==='Other'?val('sellerOther'):val('seller'),status:val('status'),updatedAt:Date.now()};
- const idx=orders.findIndex(x=>x.id===id);if(idx>=0)orders[idx]=o;else orders.push(o);persist();closeModal();render();saveToCloud(o);
+ e.preventDefault();
+ const id=val('orderId')||String(Date.now());
+ const payment=val('payment');
+ const paymentLabel=payment==='CC Installment'?'CC Installment '+(val('installmentMonths')||'')+' Months':payment;
+ 
+ const inv = Number(val('invoiceAmount')||0);
+ const dp = Number(val('downpayment')||0);
+ const bal = inv - dp;
+
+ const o={
+   id,
+   date:val('date'),
+   name:val('name'),
+   contact1:val('contact1'),
+   contact2:val('contact2'),
+   address:val('address'),
+   payment:paymentLabel,
+   paymentType:payment,
+   installmentMonths:payment==='CC Installment'?Number(val('installmentMonths')||0):null,
+   setType:val('setType'),
+   changes:val('changes'),
+   notes:val('notes'),
+   invoiceAmount:inv,
+   downpayment:dp,
+   balance:bal,
+   courier:val('courier')==='Other'?val('courierOther'):val('courier'),
+   seller:val('seller')==='Other'?val('sellerOther'):val('seller'),
+   status:val('status'),
+   updatedAt:Date.now()
+ };
+
+ const idx=orders.findIndex(x=>x.id===id);
+ if(idx>=0) orders[idx]=o; else orders.push(o);
+ persist();
+ closeModal();
+ render();
+ saveToCloud(o);
 });
+
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function dateDisplay(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-PH',{day:'2-digit',month:'short',year:'numeric'})}
 function detailCell(o){return `<div class="detail"><b>${esc(o.name||'Unnamed customer')}</b><br><span class="sub">${esc(o.contact1||'No contact')}</span>${o.contact2?`<br><span class="sub">${esc(o.contact2)}</span>`:''}<br>${o.address?`<span>${esc(o.address)}</span><br>`:''}<span class="sub">Payment: ${esc(o.payment||'—')}</span></div>`}
 function orderCell(o){return `<div class="detail"><b>${esc(o.setType||'No set specified')}</b>${o.changes?`<br><span>Changes: ${esc(o.changes)}</span>`:''}${o.notes?`<br><span class="sub">Notes: ${esc(o.notes)}</span>`:''}</div>`}
-function row(o){return `<tr><td class="date-cell">${dateDisplay(o.date)}<small>${o.date===localDateString()?'Today':''}</small></td><td>${detailCell(o)}</td><td>${orderCell(o)}</td><td class="money">${money(o.downpayment)}</td><td class="money">${money(o.balance)}</td><td class="courier-cell">${esc(o.courier||'—')}</td><td class="seller-cell">${esc(o.seller||'—')}</td><td class="status-cell"><span class="pill ${o.status==='Item Received'?'delivered':''}">${esc(o.status)}</span></td><td><div class="row-actions"><button class="btn btn-outline mini" onclick="openModal('${o.id}')">Edit</button><button class="btn btn-danger mini" onclick="deleteOrder('${o.id}')">Delete</button></div></td></tr>`}
+
+function row(o){
+ return `<tr>
+   <td class="date-cell">${dateDisplay(o.date)}<small>${o.date===localDateString()?'Today':''}</small></td>
+   <td>${detailCell(o)}</td>
+   <td>${orderCell(o)}</td>
+   <td class="money">${money(o.invoiceAmount)}</td>
+   <td class="money">${money(o.downpayment)}</td>
+   <td class="money">${money(o.balance)}</td>
+   <td class="courier-cell">${esc(o.courier||'—')}</td>
+   <td class="seller-cell">${esc(o.seller||'—')}</td>
+   <td class="status-cell"><span class="pill ${o.status==='Item Received'?'delivered':''}">${esc(o.status)}</span></td>
+   <td><div class="row-actions"><button class="btn btn-outline mini" onclick="openModal('${o.id}')">Edit</button><button class="btn btn-danger mini" onclick="deleteOrder('${o.id}')">Delete</button></div></td>
+ </tr>`
+}
+
 function render(){
  const today=localDateString(),search=val('search').toLowerCase(),fd=val('filterDate'),fs=val('filterStatus');
  const matches=o=>(!search||[o.name,o.contact1,o.contact2,o.address,o.setType,o.changes,o.notes,o.courier,o.seller,o.payment].join(' ').toLowerCase().includes(search))&&(!fd||o.date===fd)&&(!fs||o.status===fs);
- // Item Received orders remain active on their order date. On later dates, they move to Closed Transaction.
  const active=orders.filter(o=>!(o.status==='Item Received'&&o.date<today)&&matches(o)).sort((a,b)=>b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt);
  const closed=orders.filter(o=>o.status==='Item Received'&&o.date<today&&matches(o)).sort((a,b)=>b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt);
- document.getElementById('activeRows').innerHTML=active.map(row).join('');document.getElementById('closedRows').innerHTML=closed.map(row).join('');
- document.getElementById('activeEmpty').hidden=active.length>0;document.getElementById('closedEmpty').hidden=closed.length>0;document.getElementById('closedCount').textContent=closed.length;
- const todayOrders=orders.filter(o=>o.date===today);document.getElementById('todayCount').textContent=todayOrders.length;document.getElementById('ongoingCount').textContent=todayOrders.filter(o=>o.status==='Ongoing').length;document.getElementById('receivedCount').textContent=todayOrders.filter(o=>o.status==='Item Received').length;document.getElementById('dpTotal').textContent=money(todayOrders.reduce((s,o)=>s+Number(o.downpayment||0),0));
+ document.getElementById('activeRows').innerHTML=active.map(row).join('');
+ document.getElementById('closedRows').innerHTML=closed.map(row).join('');
+ document.getElementById('activeEmpty').hidden=active.length>0;
+ document.getElementById('closedEmpty').hidden=closed.length>0;
+ document.getElementById('closedCount').textContent=closed.length;
+ const todayOrders=orders.filter(o=>o.date===today);
+ document.getElementById('todayCount').textContent=todayOrders.length;
+ document.getElementById('ongoingCount').textContent=todayOrders.filter(o=>o.status==='Ongoing').length;
+ document.getElementById('receivedCount').textContent=todayOrders.filter(o=>o.status==='Item Received').length;
+ document.getElementById('dpTotal').textContent=money(todayOrders.reduce((s,o)=>s+Number(o.downpayment||0),0));
 }
-function deleteOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;if(confirm(`Delete order for ${o.name||'this customer'}? This cannot be undone.`)){orders=orders.filter(x=>x.id!==id);persist();render();const c=cloudConfig();if(c.url&&c.key)cloudRequest('delete',{id}).then(()=>setSyncStatus('Order deleted locally and from Google Sheets.',true)).catch(err=>setSyncStatus('Deleted locally, but cloud delete failed: '+err.message))}}
+
+function deleteOrder(id){
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  if(confirm(`Delete order for ${o.name||'this customer'}?`)){
+    orders=orders.filter(x=>x.id!==id);
+    persist();
+    render();
+    const c=cloudConfig();
+    if(c.url&&c.key) cloudRequest('delete',{id}).then(()=>setSyncStatus('Order deleted locally and from Google Sheets.',true)).catch(err=>setSyncStatus('Deleted locally, cloud delete failed: '+err.message));
+  }
+}
+
 function clearFilters(){setVal('search','');setVal('filterDate','');setVal('filterStatus','');render()}
-function exportCSV(){const headers=['Date','Customer Name','Contact No 1','Contact No 2','Address','Payment Option','Type of Set','Changes','Notes','Invoice Amount','Downpayment','Balance','Courier','Seller Name','Status'];const fields=['date','name','contact1','contact2','address','payment','setType','changes','notes','invoiceAmount','downpayment','balance','courier','seller','status'];const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[headers.map(quote).join(','),...orders.map(o=>fields.map(k=>quote(o[k])).join(','))].join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='computer-boss-orders-'+localDateString()+'.csv';a.click();URL.revokeObjectURL(url)}
 
 function exportDeliveryPDF(){
   const rows=[...orders].sort((a,b)=>{
@@ -164,8 +361,8 @@ function exportDeliveryPDF(){
   </style></head><body><h1 class="report-title">COMPUTER BOSS DAVAO — DELIVERY / SHIPPING LIST</h1>${blocks}<script>window.onload=()=>{window.focus();window.print()}<\/script></body></html>`);
   w.document.close();
 }
+
 render();
-// Connect on page load if this device has already been configured.
 if(cloudConfig().url&&cloudConfig().key)syncFromCloud(false);
 </script>
 </body>
