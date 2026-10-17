@@ -58,10 +58,10 @@ input[readonly]{background-color:#f4f6f8;color:#555;cursor:not-allowed}
     <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="Special instructions, inclusions, etc."></textarea></div>
     <div class="field"><label for="invoiceAmount">Invoice Amount (₱)</label><input id="invoiceAmount" type="number" min="0" step="0.01" value="0" oninput="calculateBalance()"></div>
     <div class="field"><label for="downpayment">Downpayment (₱)</label><input id="downpayment" type="number" min="0" step="0.01" value="0" oninput="calculateBalance()"></div>
-    <div class="field"><label for="balance">Balance (₱)</label><input id="balance" type="number" step="0.01" value="0" readonly title="Auto-calculated: Invoice Amount - Downpayment"></div>
+    <div class="field"><label for="balance">Balance (₱)</label><input id="balance" type="number" step="0.01" value="0" readonly title="Auto-calculated: Invoice Amount - Downpayment (Settled to 0 if Item Received)"></div>
     <div class="field"><label for="courier">Courier</label><select id="courier" onchange="toggleOther('courier','courierOther')"><option>Pick up</option><option>JNT Shipping</option><option>Albert</option><option>Kokong</option><option>Angkul Junjun</option><option>Angkul Dennis</option><option>Other</option></select><input id="courierOther" placeholder="Enter courier name" style="display:none;margin-top:6px"></div>
     <div class="field"><label for="seller">Seller Name</label><select id="seller" onchange="toggleOther('seller','sellerOther')"><option>Arianne</option><option>Vicky</option><option>Ralph</option><option>Dennis</option><option>Other</option></select><input id="sellerOther" placeholder="Enter seller name" style="display:none;margin-top:6px"></div>
-    <div class="field"><label for="status">Status</label><select id="status"><option>Ongoing</option><option>Item Received</option></select></div>
+    <div class="field"><label for="status">Status</label><select id="status" onchange="calculateBalance()"><option>Ongoing</option><option>Item Received</option></select></div>
    </div>
    <div class="modal-foot"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save Order</button></div>
   </form>
@@ -74,16 +74,19 @@ const CLOUD_KEY_KEY='cbd_order_cloud_key_v1';
 
 function normalizeOrder(o){
   const dp = Number(o.downpayment || 0);
-  const bal = Number(o.balance || 0);
+  const status = o.status === 'Preparing' ? 'Ongoing' : o.status === 'Delivered' ? 'Item Received' : o.status;
   const rawInv = Number(o.invoiceAmount);
-  // Preserve explicit invoice amount if exists and non-zero, otherwise auto-calculate from DP + Balance
-  const inv = (!isNaN(rawInv) && rawInv > 0) ? rawInv : (dp + bal);
+  const inv = (!isNaN(rawInv) && rawInv > 0) ? rawInv : (dp + Number(o.balance || 0));
+  
+  // Balance is 0 if status is "Item Received", otherwise Invoice Amount - Downpayment
+  const bal = status === 'Item Received' ? 0 : (inv - dp);
+
   return {
     ...o,
-    status: o.status === 'Preparing' ? 'Ongoing' : o.status === 'Delivered' ? 'Item Received' : o.status,
+    status: status,
     invoiceAmount: inv,
     downpayment: dp,
-    balance: inv - dp,
+    balance: bal,
     payment: o.payment === 'Cash on Delivery (COD)' ? 'COD' : o.payment === 'BDO Credit Card Installment' ? 'CC Installment' : o.payment === 'Card Swipe' ? 'Credit Card' : o.payment
   };
 }
@@ -174,6 +177,11 @@ function toggleOther(selectId,inputId){const show=document.getElementById(select
 function toggleInstallmentMonths(){const show=document.getElementById('payment').value==='CC Installment';const el=document.getElementById('installmentMonths');el.style.display=show?'block':'none';if(!show)el.value=''}
 
 function calculateBalance(){
+  const status = val('status');
+  if (status === 'Item Received') {
+    setVal('balance', '0.00');
+    return;
+  }
   const inv = Number(val('invoiceAmount') || 0);
   const dp = Number(val('downpayment') || 0);
   const bal = inv - dp;
@@ -188,6 +196,7 @@ function openModal(id=null){
  setVal('downpayment','0');
  setVal('balance','0');
  setVal('installmentMonths','');
+ setVal('status','Ongoing');
  toggleInstallmentMonths();
  document.getElementById('courierOther').style.display='none';
  document.getElementById('sellerOther').style.display='none';
@@ -230,10 +239,12 @@ document.getElementById('orderForm').addEventListener('submit',e=>{
  const id=val('orderId')||String(Date.now());
  const payment=val('payment');
  const paymentLabel=payment==='CC Installment'?'CC Installment '+(val('installmentMonths')||'')+' Months':payment;
+ const status=val('status');
  
  const inv = Number(val('invoiceAmount')||0);
  const dp = Number(val('downpayment')||0);
- const bal = inv - dp;
+ // Explicitly zero balance if status is Item Received
+ const bal = status === 'Item Received' ? 0 : (inv - dp);
 
  const o={
    id,
@@ -253,7 +264,7 @@ document.getElementById('orderForm').addEventListener('submit',e=>{
    balance:bal,
    courier:val('courier')==='Other'?val('courierOther'):val('courier'),
    seller:val('seller')==='Other'?val('sellerOther'):val('seller'),
-   status:val('status'),
+   status:status,
    updatedAt:Date.now()
  };
 
