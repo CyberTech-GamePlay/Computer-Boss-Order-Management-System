@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Boss Davao | Order Management</title>
+<style>
+:root{--navy:#10243a;--blue:#1677d2;--blue2:#eaf4ff;--bg:#f3f6fa;--ink:#1d2939;--muted:#667085;--line:#e1e7ef;--green:#138a55;--greenbg:#e8f7ef;--amber:#a65b00;--amberbg:#fff3df}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#10243a,#164c7e);color:#fff;padding:24px clamp(16px,3vw,36px);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:45px;height:45px;border-radius:12px;background:#fff;color:#1677d2;display:grid;place-items:center;font-weight:900;font-size:20px}.brand h1{font-size:20px;margin:0 0 4px}.brand p{margin:0;color:#c7dff5;font-size:12px;letter-spacing:.08em}
+.header-actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;font-size:13px}.btn-primary{background:var(--blue);color:white}.btn-white{background:#fff;color:var(--navy)}.btn-outline{background:white;border:1px solid var(--line);color:var(--ink)}.btn-danger{background:#fff0f0;color:#b42318}
+main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:13px;margin-bottom:20px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 3px 12px #10243a08}.stat .label{font-size:12px;color:var(--muted);font-weight:650}.stat .num{font-size:25px;font-weight:800;margin-top:7px}.stat small{color:var(--muted)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}.toolbar h2{margin:0;font-size:18px}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{border:1px solid var(--line);background:white;border-radius:9px;padding:10px 12px;font:inherit;font-size:13px;min-width:150px}
+.table-wrap{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px #10243a08}.table-scroll{overflow:auto;max-height:68vh}table{width:100%;border-collapse:separate;border-spacing:0;min-width:1450px}thead th{position:sticky;top:0;background:#edf4fb;color:#30465d;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.045em;padding:14px 12px;border-bottom:1px solid var(--line);z-index:2}tbody td{padding:12px;border-bottom:1px solid #edf0f4;vertical-align:top;font-size:12px;min-width:100px}tbody tr:hover{background:#f9fbfe}tbody tr:last-child td{border-bottom:0}.date-cell{min-width:125px;font-weight:750}.date-cell small{display:block;color:var(--muted);font-weight:500;margin-top:4px}.detail{min-width:190px;line-height:1.55}.detail b{color:#243b53}.detail .sub{color:var(--muted)}.money{min-width:100px;font-weight:750;white-space:nowrap}.courier-cell,.seller-cell,.status-cell{min-width:145px}.pill{display:inline-block;border-radius:99px;padding:5px 9px;font-weight:750;font-size:11px;background:var(--amberbg);color:var(--amber)}.pill.delivered{background:var(--greenbg);color:var(--green)}.row-actions{display:flex;gap:5px;white-space:nowrap}.mini{padding:6px 8px;font-size:11px;border-radius:7px}
+.section-title{display:flex;align-items:center;gap:10px;margin:30px 0 12px}.section-title h2{font-size:18px;margin:0}.section-title span{background:#e5eaf0;color:#475467;border-radius:99px;padding:4px 9px;font-size:12px;font-weight:750}.closed-note{font-size:12px;color:var(--muted);margin:-4px 0 12px}.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px}
+.modal-backdrop{position:fixed;inset:0;background:#0b1728a8;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-backdrop.open{display:flex}.modal{width:min(900px,100%);max-height:92vh;overflow:auto;background:white;border-radius:16px;box-shadow:0 20px 70px #0004}.modal-head{padding:19px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:#f0f3f7;border-radius:8px;padding:7px 11px;cursor:pointer}.form-grid{padding:20px 22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#475467}.field input,.field select,.field textarea{width:100%;border:1px solid #d5dde7;border-radius:8px;padding:10px 11px;font:inherit;font-size:13px;background:white;min-width:0}.field textarea{resize:vertical;min-height:74px}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #b8dcff;border-color:var(--blue)}.modal-foot{padding:15px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:9px;position:sticky;bottom:0;background:white}.hint{font-size:11px;color:var(--muted);margin-top:4px}
+@media(max-width:800px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:17px}}
+@media(max-width:520px){header{padding:18px 14px}.header-actions{width:100%}.header-actions .btn{flex:1}main{padding:16px 10px}.form-grid{grid-template-columns:1fr;padding:16px}.field.full{grid-column:auto}.modal-head,.modal-foot{padding:14px 16px}.summary{gap:8px}.stat{padding:13px}.stat .num{font-size:22px}.filters{width:100%}.filters input{flex:1;min-width:0;width:100%}}
+@media print{header,.toolbar,.header-actions,.filters,.row-actions,.modal-backdrop{display:none!important}body{background:white}main{padding:0}.table-wrap{border:0;box-shadow:none}.table-scroll{overflow:visible;max-height:none}table{min-width:0;font-size:9px}thead th,tbody td{padding:5px;font-size:8px;position:static}.summary{grid-template-columns:repeat(4,1fr)}.section-title{margin-top:15px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">CB</div><div><h1>Computer Boss Davao</h1><p>ORDER MANAGEMENT SYSTEM</p></div></div>
+ <div class="header-actions"><button class="btn btn-white" onclick="exportDeliveryPDF()">Export Delivery PDF</button><button class="btn btn-white" onclick="window.print()">Print</button><button class="btn btn-primary" onclick="openModal()">＋ Add Order</button></div>
+</header>
+<main>
+ <section class="summary">
+  <div class="stat"><div class="label">Today's Orders</div><div class="num" id="todayCount">0</div><small>All orders dated today</small></div>
+  <div class="stat"><div class="label">Preparing</div><div class="num" id="preparingCount">0</div><small>Active orders</small></div>
+  <div class="stat"><div class="label">Delivered Today</div><div class="num" id="deliveredCount">0</div><small>Still visible for today's sales</small></div>
+  <div class="stat"><div class="label">Today's Downpayments</div><div class="num" id="dpTotal">₱0.00</div><small>Based on today's orders</small></div>
+ </section>
+ <div class="toolbar"><h2>Active Orders</h2><div class="filters"><input id="search" placeholder="Search customer, contact, order..." oninput="render()"><input id="filterDate" type="date" title="Filter by order date" onchange="render()"><select id="filterStatus" onchange="render()"><option value="">All statuses</option><option>Preparing</option><option>Delivered</option></select><button class="btn btn-outline" onclick="clearFilters()">Clear filters</button></div></div>
+ <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="activeRows"></tbody></table><div class="empty" id="activeEmpty" hidden>No active orders match your filters.</div></div></div>
+ <div class="section-title"><h2>Closed Transaction</h2><span id="closedCount">0</span></div>
+ <p class="closed-note">Delivered orders from previous dates are automatically listed here. Delivered orders dated today remain above so you can monitor today's sales.</p>
+ <div class="table-wrap"><div class="table-scroll"><table><thead><tr><th>Date</th><th>Customer Details</th><th>Order Details</th><th>Downpayment</th><th>Balance</th><th>Courier</th><th>Seller Name</th><th>Status</th><th>Actions</th></tr></thead><tbody id="closedRows"></tbody></table><div class="empty" id="closedEmpty" hidden>No closed transactions yet.</div></div></div>
+</main>
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()">
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-head"><h2 id="modalTitle">Add New Order</h2><button class="close" onclick="closeModal()">✕</button></div>
+  <form id="orderForm">
+   <input type="hidden" id="orderId">
+   <div class="form-grid">
+    <div class="field"><label for="date">Order Date</label><input id="date" type="date" required><div class="hint">Use the calendar to select day, month, and year.</div></div>
+    <div class="field"><label for="name">Customer Name</label><input id="name" required placeholder="Full name"></div>
+    <div class="field"><label for="contact1">Contact No. 1</label><input id="contact1" type="tel" placeholder="Primary contact"></div>
+    <div class="field"><label for="contact2">Contact No. 2</label><input id="contact2" type="tel" placeholder="Optional contact"></div>
+    <div class="field full"><label for="address">Address</label><textarea id="address" placeholder="Complete delivery address"></textarea></div>
+    <div class="field"><label for="payment">Payment Option</label><select id="payment"><option value="">Select payment option</option><option>Cash</option><option>Cash on Delivery (COD)</option><option>Home Credit</option><option>Skyro</option><option>Salmon</option><option>BDO Credit Card Installment</option><option>Card Swipe</option><option>QRPH</option><option>Bank Transfer</option><option>Other</option></select></div>
+    <div class="field"><label for="setType">Type of Set</label><input id="setType" placeholder="e.g. Ryzen 5 PC Set / Laptop"></div>
+    <div class="field"><label for="changes">Changes</label><input id="changes" placeholder="Upgrades or modifications"></div>
+    <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="Special instructions, inclusions, etc."></textarea></div>
+    <div class="field"><label for="downpayment">Downpayment (₱)</label><input id="downpayment" type="number" min="0" step="0.01" value="0"></div>
+    <div class="field"><label for="balance">Balance (₱)</label><input id="balance" type="number" min="0" step="0.01" value="0"></div>
+    <div class="field"><label for="courier">Courier</label><select id="courier" onchange="toggleOther('courier','courierOther')"><option>Pick up</option><option>JNT Shipping</option><option>Albert</option><option>Kokong</option><option>Angkul Junjun</option><option>Angkul Dennis</option><option>Other</option></select><input id="courierOther" placeholder="Enter courier name" style="display:none;margin-top:6px"></div>
+    <div class="field"><label for="seller">Seller Name</label><select id="seller" onchange="toggleOther('seller','sellerOther')"><option>Arianne</option><option>Vicky</option><option>Ralph</option><option>Dennis</option><option>Other</option></select><input id="sellerOther" placeholder="Enter seller name" style="display:none;margin-top:6px"></div>
+    <div class="field"><label for="status">Status</label><select id="status"><option>Preparing</option><option>Delivered</option></select></div>
+   </div>
+   <div class="modal-foot"><button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button><button type="submit" class="btn btn-primary">Save Order</button></div>
+  </form>
+ </section>
+</div>
+<script>
+const KEY='cbd_order_management_v1';
+let orders=loadOrders();
+function localDateString(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+function loadOrders(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(orders))}
+function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function val(id){return document.getElementById(id).value.trim()}
+function setVal(id,v){document.getElementById(id).value=v??''}
+function toggleOther(selectId,inputId){const show=document.getElementById(selectId).value==='Other';const el=document.getElementById(inputId);el.style.display=show?'block':'none';if(!show)el.value=''}
+function openModal(id=null){
+ document.getElementById('orderForm').reset();setVal('orderId','');setVal('date',localDateString());setVal('downpayment','0');setVal('balance','0');
+ document.getElementById('courierOther').style.display='none';document.getElementById('sellerOther').style.display='none';
+ document.getElementById('modalTitle').textContent=id?'Edit Order':'Add New Order';
+ if(id){const o=orders.find(x=>x.id===id);if(!o)return;for(const k of ['id','date','name','contact1','contact2','address','payment','setType','changes','notes','downpayment','balance','status'])setVal(k==='id'?'orderId':k,o[k]);setSelectOther('courier', 'courierOther',o.courier,['Pick up','JNT Shipping','Albert','Kokong','Angkul Junjun','Angkul Dennis','Other']);setSelectOther('seller','sellerOther',o.seller,['Arianne','Vicky','Ralph','Dennis','Other']);}
+ document.getElementById('modalBackdrop').classList.add('open');document.body.style.overflow='hidden';
+}
+function setSelectOther(selectId,inputId,value,options){const select=document.getElementById(selectId);if(options.includes(value)){select.value=value;document.getElementById(inputId).style.display='none'}else{select.value='Other';document.getElementById(inputId).style.display='block';document.getElementById(inputId).value=value||''}}
+function closeModal(){document.getElementById('modalBackdrop').classList.remove('open');document.body.style.overflow=''}
+document.getElementById('orderForm').addEventListener('submit',e=>{
+ e.preventDefault();const id=val('orderId')||String(Date.now());
+ const o={id,date:val('date'),name:val('name'),contact1:val('contact1'),contact2:val('contact2'),address:val('address'),payment:val('payment'),setType:val('setType'),changes:val('changes'),notes:val('notes'),downpayment:Number(val('downpayment')||0),balance:Number(val('balance')||0),courier:val('courier')==='Other'?val('courierOther'):val('courier'),seller:val('seller')==='Other'?val('sellerOther'):val('seller'),status:val('status'),updatedAt:Date.now()};
+ const idx=orders.findIndex(x=>x.id===id);if(idx>=0)orders[idx]=o;else orders.push(o);persist();closeModal();render();
+});
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function dateDisplay(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-PH',{day:'2-digit',month:'short',year:'numeric'})}
+function detailCell(o){return `<div class="detail"><b>${esc(o.name||'Unnamed customer')}</b><br><span class="sub">${esc(o.contact1||'No contact')}</span>${o.contact2?`<br><span class="sub">${esc(o.contact2)}</span>`:''}<br>${o.address?`<span>${esc(o.address)}</span><br>`:''}<span class="sub">Payment: ${esc(o.payment||'—')}</span></div>`}
+function orderCell(o){return `<div class="detail"><b>${esc(o.setType||'No set specified')}</b>${o.changes?`<br><span>Changes: ${esc(o.changes)}</span>`:''}${o.notes?`<br><span class="sub">Notes: ${esc(o.notes)}</span>`:''}</div>`}
+function row(o){return `<tr><td class="date-cell">${dateDisplay(o.date)}<small>${o.date===localDateString()?'Today':''}</small></td><td>${detailCell(o)}</td><td>${orderCell(o)}</td><td class="money">${money(o.downpayment)}</td><td class="money">${money(o.balance)}</td><td class="courier-cell">${esc(o.courier||'—')}</td><td class="seller-cell">${esc(o.seller||'—')}</td><td class="status-cell"><span class="pill ${o.status==='Delivered'?'delivered':''}">${esc(o.status)}</span></td><td><div class="row-actions"><button class="btn btn-outline mini" onclick="openModal('${o.id}')">Edit</button><button class="btn btn-danger mini" onclick="deleteOrder('${o.id}')">Delete</button></div></td></tr>`}
+function render(){
+ const today=localDateString(),search=val('search').toLowerCase(),fd=val('filterDate'),fs=val('filterStatus');
+ const matches=o=>(!search||[o.name,o.contact1,o.contact2,o.address,o.setType,o.changes,o.notes,o.courier,o.seller,o.payment].join(' ').toLowerCase().includes(search))&&(!fd||o.date===fd)&&(!fs||o.status===fs);
+ // Delivered orders remain active on their order date. On later dates, they move to Closed Transaction.
+ const active=orders.filter(o=>!(o.status==='Delivered'&&o.date<today)&&matches(o)).sort((a,b)=>b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt);
+ const closed=orders.filter(o=>o.status==='Delivered'&&o.date<today&&matches(o)).sort((a,b)=>b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt);
+ document.getElementById('activeRows').innerHTML=active.map(row).join('');document.getElementById('closedRows').innerHTML=closed.map(row).join('');
+ document.getElementById('activeEmpty').hidden=active.length>0;document.getElementById('closedEmpty').hidden=closed.length>0;document.getElementById('closedCount').textContent=closed.length;
+ const todayOrders=orders.filter(o=>o.date===today);document.getElementById('todayCount').textContent=todayOrders.length;document.getElementById('preparingCount').textContent=todayOrders.filter(o=>o.status==='Preparing').length;document.getElementById('deliveredCount').textContent=todayOrders.filter(o=>o.status==='Delivered').length;document.getElementById('dpTotal').textContent=money(todayOrders.reduce((s,o)=>s+Number(o.downpayment||0),0));
+}
+function deleteOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;if(confirm(`Delete order for ${o.name||'this customer'}? This cannot be undone.`)){orders=orders.filter(x=>x.id!==id);persist();render()}}
+function clearFilters(){setVal('search','');setVal('filterDate','');setVal('filterStatus','');render()}
+function exportCSV(){const headers=['Date','Customer Name','Contact No 1','Contact No 2','Address','Payment Option','Type of Set','Changes','Notes','Downpayment','Balance','Courier','Seller Name','Status'];const fields=['date','name','contact1','contact2','address','payment','setType','changes','notes','downpayment','balance','courier','seller','status'];const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[headers.map(quote).join(','),...orders.map(o=>fields.map(k=>quote(o[k])).join(','))].join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='computer-boss-orders-'+localDateString()+'.csv';a.click();URL.revokeObjectURL(url)}
+
+function exportDeliveryPDF(){
+ const today=localDateString();
+ const rows=[...orders].sort((a,b)=>a.date.localeCompare(b.date)||a.name.localeCompare(b.name));
+ if(!rows.length){alert('There are no orders to export yet.');return;}
+ const escHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const dateFmt=s=>{if(!s)return '';const d=new Date(s+'T12:00:00');return `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${d.getFullYear()}`};
+ const peso=n=>'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const formatAmount=n=>'₱'+Number(n||0).toLocaleString('en-PH',{maximumFractionDigits:2});
+ const blocks=rows.map(o=>{
+   const total=Number(o.downpayment||0)+Number(o.balance||0);
+   const isShipping=/jnt shipping/i.test(o.courier||'');
+   const heading=isShipping?'FOR SHIPPING:':'FOR DELIVERY:';
+   const contact=[o.contact1,o.contact2].filter(Boolean).join(' / ');
+   const status=(o.status||'').toUpperCase();
+   const set=o.setType||'';
+   const lines=[
+    `<div class="heading">${heading}${o.courier?` <span class="courier">(${escHtml(o.courier)})</span>`:''}</div>`,
+    `<div>${escHtml(dateFmt(o.date))}</div>`,
+    `<div>Name: ${escHtml(o.name)}</div>`,
+    `<div>Contact No.: ${escHtml(contact)}</div>`,
+    `<div>Address: ${escHtml(o.address)}</div>`,
+    `<div>SET: ${escHtml(set)}</div>`,
+    o.changes?`<div>Changes: ${escHtml(o.changes)}</div>`:'',
+    o.notes?`<div>Notes: ${escHtml(o.notes)}</div>`:'',
+    `<div>STATUS: ${escHtml(status)}</div>`,
+    `<div>SA: ${escHtml((o.seller||'').toUpperCase())}</div>`,
+    `<div>INVOICE AMOUNT: ${escHtml(formatAmount(total))}</div>`,
+    `<div>DP: ${escHtml(formatAmount(o.downpayment))}</div>`,
+    `<div>BALANCE: ${escHtml(formatAmount(o.balance))}</div>`
+   ].filter(Boolean).join('');
+   return `<section class="order">${lines}</section>`;
+ }).join('');
+ const w=window.open('','_blank');
+ if(!w){alert('Please allow pop-ups for this page to export the PDF.');return;}
+ w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Computer Boss Davao - Delivery Report</title><style>
+ @page{size:A4;margin:14mm 16mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:11pt;line-height:1.45;margin:0}
+ .report-title{font-size:15pt;font-weight:700;margin:0 0 14px;border-bottom:2px solid #111;padding-bottom:8px}
+ .order{break-inside:avoid-page;margin:0 0 15px;padding:0 0 12px;border-bottom:1px dashed #555}
+ .heading{font-weight:700;margin-bottom:4px}.courier{font-weight:400}
+ @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+ </style></head><body><h1 class="report-title">COMPUTER BOSS DAVAO — DELIVERY / SHIPPING LIST</h1>${blocks}<script>window.onload=()=>{window.focus();window.print()}<\/script></body></html>`);
+ w.document.close();
+}
+render();
+</script>
+</body>
+</html>
