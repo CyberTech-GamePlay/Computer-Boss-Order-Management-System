@@ -24,9 +24,10 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
 <body>
 <header>
  <div class="brand"><div class="logo">CB</div><div><h1>Computer Boss Davao</h1><p>ORDER MANAGEMENT SYSTEM</p></div></div>
- <div class="header-actions"><button class="btn btn-white" onclick="exportDeliveryPDF()">Export Delivery PDF</button><button class="btn btn-white" onclick="window.print()">Print</button><button class="btn btn-primary" onclick="openModal()">＋ Add Order</button></div>
+ <div class="header-actions"><button class="btn btn-white" onclick="exportDeliveryPDF()">Export Delivery PDF</button><button class="btn btn-white" onclick="configureCloud()">☁ Cloud Sync Setup</button><button class="btn btn-white" onclick="window.print()">Print</button><button class="btn btn-primary" onclick="openModal()">＋ Add Order</button></div>
 </header>
 <main>
+ <div id="syncStatus" style="margin:0 0 14px;padding:10px 13px;border-radius:9px;background:#fff3df;color:#8a4b00;font-size:12px;font-weight:700">Cloud sync not configured — orders are currently saved on this device only.</div>
  <section class="summary">
   <div class="stat"><div class="label">Today's Orders</div><div class="num" id="todayCount">0</div><small>All orders dated today</small></div>
   <div class="stat"><div class="label">Preparing</div><div class="num" id="preparingCount">0</div><small>Active orders</small></div>
@@ -66,10 +67,19 @@ main{padding:24px clamp(12px,2vw,28px) 36px;max-width:1900px;margin:auto}
 </div>
 <script>
 const KEY='cbd_order_management_v1';
+const CLOUD_URL_KEY='cbd_order_cloud_url_v1';
+const CLOUD_KEY_KEY='cbd_order_cloud_key_v1';
 let orders=loadOrders();
+let cloudBusy=false;
 function localDateString(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 function loadOrders(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
 function persist(){localStorage.setItem(KEY,JSON.stringify(orders))}
+function setSyncStatus(message,ok=false){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=message;el.style.background=ok?'#e8f7ef':'#fff3df';el.style.color=ok?'#11663f':'#8a4b00'}
+function cloudConfig(){return {url:(localStorage.getItem(CLOUD_URL_KEY)||'').trim(),key:(localStorage.getItem(CLOUD_KEY_KEY)||'').trim()}}
+function configureCloud(){const c=cloudConfig();const url=prompt('Paste your Google Apps Script Web App URL (ends in /exec):',c.url);if(url===null)return;const key=prompt('Enter the Cloud Sync Access Key you set in Code.gs:',c.key);if(key===null)return;if(!url.trim()||!/^https:\/\/script\.google\.com\/macros\/s\//.test(url.trim())){alert('Please enter a valid Google Apps Script Web App URL ending in /exec.');return}if(!key.trim()){alert('Access key cannot be blank.');return}localStorage.setItem(CLOUD_URL_KEY,url.trim());localStorage.setItem(CLOUD_KEY_KEY,key.trim());syncFromCloud(true)}
+async function cloudRequest(action,data={}){const c=cloudConfig();if(!c.url||!c.key)throw new Error('Cloud sync is not configured on this device.');let response;if(action==='list'){const u=new URL(c.url);u.searchParams.set('action','list');u.searchParams.set('key',c.key);response=await fetch(u.toString(),{method:'GET',redirect:'follow',cache:'no-store'});}else{response=await fetch(c.url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,key:c.key,...data})});}const result=await response.json();if(!result.ok)throw new Error(result.error||'Cloud service returned an error.');return result}
+async function syncFromCloud(showAlert=false){if(cloudBusy)return;const c=cloudConfig();if(!c.url||!c.key){setSyncStatus('Cloud sync not configured — orders are currently saved on this device only.');return}cloudBusy=true;setSyncStatus('Connecting to Google Sheets…');try{const result=await cloudRequest('list');const remote=Array.isArray(result.orders)?result.orders:[];if(remote.length){orders=remote;persist();render();setSyncStatus(`Cloud sync connected • ${orders.length} order(s) loaded from Google Sheets.`,true)}else if(orders.length){for(const order of orders)await cloudRequest('save',{order});setSyncStatus(`Uploaded ${orders.length} existing local order(s) to Google Sheets.`,true)}else{setSyncStatus('Cloud sync connected • no orders saved yet.',true)}if(showAlert)alert('Cloud sync connected successfully. This device is now using the shared Google Sheet.');}catch(err){setSyncStatus('Cloud sync error: '+err.message+' — local orders have been kept.');if(showAlert)alert('Could not connect to Google Sheets. Check the Web App URL, access key, deployment permissions, and internet connection.\n\nDetails: '+err.message)}finally{cloudBusy=false}}
+async function saveToCloud(order){const c=cloudConfig();if(!c.url||!c.key){setSyncStatus('Saved on this device only. Use Cloud Sync Setup to connect Google Sheets.');return}try{await cloudRequest('save',{order});setSyncStatus('Saved locally and synced to Google Sheets.',true)}catch(err){setSyncStatus('Local save complete, but cloud sync failed: '+err.message+' — use Sync Setup to retry.')}}
 function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function val(id){return document.getElementById(id).value.trim()}
 function setVal(id,v){document.getElementById(id).value=v??''}
@@ -86,7 +96,7 @@ function closeModal(){document.getElementById('modalBackdrop').classList.remove(
 document.getElementById('orderForm').addEventListener('submit',e=>{
  e.preventDefault();const id=val('orderId')||String(Date.now());
  const o={id,date:val('date'),name:val('name'),contact1:val('contact1'),contact2:val('contact2'),address:val('address'),payment:val('payment'),setType:val('setType'),changes:val('changes'),notes:val('notes'),downpayment:Number(val('downpayment')||0),balance:Number(val('balance')||0),courier:val('courier')==='Other'?val('courierOther'):val('courier'),seller:val('seller')==='Other'?val('sellerOther'):val('seller'),status:val('status'),updatedAt:Date.now()};
- const idx=orders.findIndex(x=>x.id===id);if(idx>=0)orders[idx]=o;else orders.push(o);persist();closeModal();render();
+ const idx=orders.findIndex(x=>x.id===id);if(idx>=0)orders[idx]=o;else orders.push(o);persist();closeModal();render();saveToCloud(o);
 });
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function dateDisplay(s){if(!s)return '—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-PH',{day:'2-digit',month:'short',year:'numeric'})}
@@ -103,7 +113,7 @@ function render(){
  document.getElementById('activeEmpty').hidden=active.length>0;document.getElementById('closedEmpty').hidden=closed.length>0;document.getElementById('closedCount').textContent=closed.length;
  const todayOrders=orders.filter(o=>o.date===today);document.getElementById('todayCount').textContent=todayOrders.length;document.getElementById('preparingCount').textContent=todayOrders.filter(o=>o.status==='Preparing').length;document.getElementById('deliveredCount').textContent=todayOrders.filter(o=>o.status==='Delivered').length;document.getElementById('dpTotal').textContent=money(todayOrders.reduce((s,o)=>s+Number(o.downpayment||0),0));
 }
-function deleteOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;if(confirm(`Delete order for ${o.name||'this customer'}? This cannot be undone.`)){orders=orders.filter(x=>x.id!==id);persist();render()}}
+function deleteOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;if(confirm(`Delete order for ${o.name||'this customer'}? This cannot be undone.`)){orders=orders.filter(x=>x.id!==id);persist();render();const c=cloudConfig();if(c.url&&c.key)cloudRequest('delete',{id}).then(()=>setSyncStatus('Order deleted locally and from Google Sheets.',true)).catch(err=>setSyncStatus('Deleted locally, but cloud delete failed: '+err.message))}}
 function clearFilters(){setVal('search','');setVal('filterDate','');setVal('filterStatus','');render()}
 function exportCSV(){const headers=['Date','Customer Name','Contact No 1','Contact No 2','Address','Payment Option','Type of Set','Changes','Notes','Downpayment','Balance','Courier','Seller Name','Status'];const fields=['date','name','contact1','contact2','address','payment','setType','changes','notes','downpayment','balance','courier','seller','status'];const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv=[headers.map(quote).join(','),...orders.map(o=>fields.map(k=>quote(o[k])).join(','))].join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='computer-boss-orders-'+localDateString()+'.csv';a.click();URL.revokeObjectURL(url)}
 
@@ -151,6 +161,8 @@ function exportDeliveryPDF(){
  w.document.close();
 }
 render();
+// Connect on page load if this device has already been configured.
+if(cloudConfig().url&&cloudConfig().key)syncFromCloud(false);
 </script>
 </body>
 </html>
