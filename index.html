@@ -71,7 +71,104 @@ const CLOUD_URL_KEY='cbd_order_cloud_url_v1';
 const CLOUD_KEY_KEY='cbd_order_cloud_key_v1';
 let orders=loadOrders();
 let cloudBusy=false;
-function localDateString(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+
+function normalizeDate(value) {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+
+  // Handle JavaScript Date objects
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) return '';
+    return [
+      value.getFullYear(),
+      String(value.getMonth() + 1).padStart(2, '0'),
+      String(value.getDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  // Handle numeric Google Sheets date serials
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    // Google Sheets serial date epoch: December 30, 1899
+    const date = new Date(Date.UTC(1899, 11, 30) + value * 86400000);
+    return [
+      date.getUTCFullYear(),
+      String(date.getUTCMonth() + 1).padStart(2, '0'),
+      String(date.getUTCDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  const s = String(value).trim();
+  if (!s) return '';
+
+  // Standard date or ISO datetime: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+  const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:$|T|\s)/);
+  if (iso) {
+    const y = Number(iso[1]);
+    const m = Number(iso[2]);
+    const d = Number(iso[3]);
+
+    if (isValidDateParts(y, m, d)) {
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+    return '';
+  }
+
+  // Handle common Google Sheets / US-style dates: MM/DD/YYYY
+  const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const m = Number(slash[1]);
+    const d = Number(slash[2]);
+    const y = Number(slash[3]);
+
+    if (isValidDateParts(y, m, d)) {
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+    return '';
+  }
+
+  // Handle date strings such as "Fri Oct 16 2026 ..."
+  const parsed = new Date(s);
+  if (!Number.isNaN(parsed.getTime())) {
+    return [
+      parsed.getFullYear(),
+      String(parsed.getMonth() + 1).padStart(2, '0'),
+      String(parsed.getDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  return '';
+}
+
+function isValidDateParts(year, month, day) {
+  const d = new Date(Date.UTC(year, month - 1, day));
+  return d.getUTCFullYear() === year &&
+         d.getUTCMonth() === month - 1 &&
+         d.getUTCDate() === day;
+}
+
+function localDateString(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function loadOrders() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+    if (!Array.isArray(saved)) return [];
+
+    return saved.map(o => ({
+      ...o,
+      date: normalizeDate(o.date)
+    }));
+  } catch (e) {
+    return [];
+  }
+}
+
 function loadOrders(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
 function persist(){localStorage.setItem(KEY,JSON.stringify(orders))}
 function setSyncStatus(message,ok=false){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=message;el.style.background=ok?'#e8f7ef':'#fff3df';el.style.color=ok?'#11663f':'#8a4b00'}
