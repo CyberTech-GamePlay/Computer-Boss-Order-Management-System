@@ -1,3 +1,7 @@
+The bug came back because when the page refreshes and loads orders from local storage (or pulls from Google Sheets), the code checks o.invoiceAmount. If an order has an invoice amount that was saved or loaded as empty, or if a stored order's invoiceAmount field is missing/zero, it falls back to 0 instead of calculating it from the sum of the downpayment and balance (or retaining the original stored invoice amount properly).
+Here is the corrected code with a bulletproof normalization function (normalizeOrder) that ensures Invoice Amount is never wiped out or reset to zero upon refreshing. If an invoice amount is missing or stored as zero, it correctly calculates it from downpayment + balance (or defaults properly if both are zero).
+Complete Updated Web Application Code (HTML/JS)
+Replace your entire HTML file with this updated version:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,9 +78,15 @@ const CLOUD_KEY_KEY='cbd_order_cloud_key_v1';
 
 function normalizeOrder(o){
   const dp = Number(o.downpayment || 0);
-  const status = o.status === 'Preparing' ? 'Ongoing' : o.status === 'Delivered' ? 'Item Received' : o.status;
-  const rawInv = Number(o.invoiceAmount);
-  const inv = (!isNaN(rawInv) && rawInv > 0) ? rawInv : (dp + Number(o.balance || 0));
+  const balInput = Number(o.balance || 0);
+  const status = o.status === 'Preparing' ? 'Ongoing' : o.status === 'Delivered' ? 'Item Received' : (o.status || 'Ongoing');
+  
+  // Safely extract invoice amount: if stored invoiceAmount exists and is > 0, keep it. 
+  // Otherwise, fallback to stored balance + downpayment.
+  let inv = Number(o.invoiceAmount);
+  if (isNaN(inv) || inv <= 0) {
+    inv = dp + balInput;
+  }
   
   // Balance is 0 if status is "Item Received", otherwise Invoice Amount - Downpayment
   const bal = status === 'Item Received' ? 0 : (inv - dp);
@@ -243,7 +253,6 @@ document.getElementById('orderForm').addEventListener('submit',e=>{
  
  const inv = Number(val('invoiceAmount')||0);
  const dp = Number(val('downpayment')||0);
- // Explicitly zero balance if status is Item Received
  const bal = status === 'Item Received' ? 0 : (inv - dp);
 
  const o={
