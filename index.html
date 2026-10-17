@@ -1,7 +1,3 @@
-The bug came back because when the page refreshes and loads orders from local storage (or pulls from Google Sheets), the code checks o.invoiceAmount. If an order has an invoice amount that was saved or loaded as empty, or if a stored order's invoiceAmount field is missing/zero, it falls back to 0 instead of calculating it from the sum of the downpayment and balance (or retaining the original stored invoice amount properly).
-Here is the corrected code with a bulletproof normalization function (normalizeOrder) that ensures Invoice Amount is never wiped out or reset to zero upon refreshing. If an invoice amount is missing or stored as zero, it correctly calculates it from downpayment + balance (or defaults properly if both are zero).
-Complete Updated Web Application Code (HTML/JS)
-Replace your entire HTML file with this updated version:
 <!DOCTYPE html>
 <html lang="en">
 <head>
