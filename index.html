@@ -350,7 +350,13 @@ function deleteOrder(id){
 function clearFilters(){setVal('search','');setVal('filterDate','');setVal('filterStatus','');render()}
 
 function exportDeliveryPDF(){
-  const rows=[...orders].sort((a,b)=>{
+  // Match the Closed Transaction rule used by render(): Item Received orders
+  // from dates before today are closed and must never appear in this export.
+  const today = localDateString();
+  const rows=orders
+    .filter(o => !(String(o.status || '').trim().toLowerCase() === 'item received'
+      && String(o.date || '').slice(0, 10) < today))
+    .sort((a,b)=>{
     const group=o=>/^pick\s*up$/i.test(o.courier||'')?0:/jnt shipping/i.test(o.courier||'')?2:1;
     return group(a)-group(b)||String(a.date||'').localeCompare(String(b.date||''))||String(a.name||'').localeCompare(String(b.name||''));
   });
