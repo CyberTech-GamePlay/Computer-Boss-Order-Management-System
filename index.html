@@ -25,7 +25,7 @@ input[readonly]{background-color:#f4f6f8;color:#555;cursor:not-allowed}
 <body>
 <header>
  <div class="brand"><div class="logo">CB</div><div><h1>Computer Boss Davao</h1><p>ORDER MANAGEMENT SYSTEM</p></div></div>
- <div class="header-actions"><button class="btn btn-white" onclick="exportDeliveryPDF()">Export Delivery PDF</button><button class="btn btn-white" onclick="configureCloud()">☁ Cloud Sync Setup</button><button class="btn btn-white" onclick="window.print()">Print</button><button class="btn btn-primary" onclick="openModal()">＋ Add Order</button></div>
+ <div class="header-actions"><button class="btn btn-white" onclick="exportDeliveryPDF()">Export Order Detail</button><button class="btn btn-white" onclick="configureCloud()">☁ Cloud Sync Setup</button><button class="btn btn-white" onclick="window.print()">Print</button><button class="btn btn-primary" onclick="openModal()">＋ Add Order</button></div>
 </header>
 <main>
  <div id="syncStatus" style="margin:0 0 14px;padding:10px 13px;border-radius:9px;background:#fff3df;color:#8a4b00;font-size:12px;font-weight:700">Cloud sync not configured — orders are currently saved on this device only.</div>
@@ -354,7 +354,7 @@ function exportDeliveryPDF(){
     const group=o=>/^pick\s*up$/i.test(o.courier||'')?0:/jnt shipping/i.test(o.courier||'')?2:1;
     return group(a)-group(b)||String(a.date||'').localeCompare(String(b.date||''))||String(a.name||'').localeCompare(String(b.name||''));
   });
-  if(!rows.length){alert('There are no orders to export yet.');return;}
+  if(!rows.length){alert('There are no active orders to export.');return;}
   const escHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const dateFmt=s=>{if(!s)return '';const d=new Date(s+'T12:00:00');return `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${d.getFullYear()}`};
   const amount=n=>'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -383,14 +383,14 @@ function exportDeliveryPDF(){
   }).join('');
   const w=window.open('','_blank');
   if(!w){alert('Please allow pop-ups for this page to export the PDF.');return;}
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Computer Boss Davao - Delivery Report</title><style>
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Computer Boss Davao - Order Detail</title><style>
   @page{size:A4;margin:10mm 12mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#111;font-size:10pt;line-height:1.25;margin:0}
   .report-title{font-size:12pt;font-weight:700;margin:0 0 8px;border-bottom:1px solid #111;padding-bottom:5px}
   .group-title{font-size:11pt;margin:10px 0 5px;padding:4px 6px;background:#e9edf2;border:1px solid #b8c0ca;break-after:avoid}
   .order{break-inside:avoid-page;margin:0 0 7px;padding:0 0 6px;border-bottom:1px dashed #777}
   .order div{margin:0 0 1px}.order div:first-child{font-weight:700}.order div:nth-child(2){font-weight:700}
   @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-  </style></head><body><h1 class="report-title">COMPUTER BOSS DAVAO — DELIVERY / SHIPPING LIST</h1>${blocks}<script>window.onload=()=>{window.focus();window.print()}<\/script></body></html>`);
+  </style></head><body><h1 class="report-title">COMPUTER BOSS DAVAO — ORDER DETAIL</h1>${blocks}<script>window.onload=()=>{window.focus();window.print()}<\/script></body></html>`);
   w.document.close();
 }
 
