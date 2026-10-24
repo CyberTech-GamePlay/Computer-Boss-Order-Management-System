@@ -1,0 +1,307 @@
+
+/* =====================================
+   COMPUTER BOSS DAVAO
+   MOBILE ACTIVE ORDER CARD LAYOUT
+   ===================================== */
+
+/* Apply only to phones */
+@media screen and (max-width: 520px) {
+
+  /* Page spacing */
+  main {
+    padding: 12px 9px 24px;
+  }
+
+  /* Header buttons */
+  header {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .brand h1 {
+    font-size: 16px;
+  }
+
+  .brand p {
+    font-size: 10px;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+    padding: 10px 6px;
+    font-size: 11px;
+  }
+
+  /* Summary boxes */
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+
+  .stat {
+    padding: 10px;
+    border-radius: 11px;
+  }
+
+  .stat .label {
+    font-size: 10px;
+  }
+
+  .stat .num {
+    font-size: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  .stat small {
+    font-size: 10px;
+  }
+
+  /* Active Orders heading and filters */
+  .toolbar {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .toolbar h2 {
+    font-size: 17px;
+  }
+
+  .filters {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .filters input,
+  .filters select {
+    width: 100%;
+    min-width: 0;
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+
+  #search,
+  .filters .btn {
+    grid-column: 1 / -1;
+  }
+
+  /* Remove table container restrictions */
+  .table-wrap {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .table-scroll {
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Convert table into vertical cards */
+  table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: block;
+    width: 100%;
+  }
+
+  /* Individual order card */
+  tbody tr {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e1e7ef;
+    border-radius: 13px;
+    margin-bottom: 12px;
+    padding: 8px 11px;
+    box-shadow: 0 3px 10px #10243a0a;
+  }
+
+  tbody tr:hover {
+    background: #ffffff;
+  }
+
+  /* Each detail becomes a labeled row */
+  tbody td {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #edf0f4;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  /* Field labels */
+  tbody td::before {
+    content: "DETAIL";
+    color: #667085;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+  }
+
+  tbody td:nth-child(1)::before {
+    content: "Order Date";
+  }
+
+  tbody td:nth-child(2)::before {
+    content: "Customer";
+  }
+
+  tbody td:nth-child(3)::before {
+    content: "Order Details";
+  }
+
+  tbody td:nth-child(4)::before {
+    content: "Invoice Amount";
+  }
+
+  tbody td:nth-child(5)::before {
+    content: "Downpayment";
+  }
+
+  tbody td:nth-child(6)::before {
+    content: "Balance";
+  }
+
+  tbody td:nth-child(7)::before {
+    content: "Courier";
+  }
+
+  tbody td:nth-child(8)::before {
+    content: "Seller";
+  }
+
+  tbody td:nth-child(9)::before {
+    content: "Status";
+  }
+
+  tbody td:nth-child(10)::before {
+    content: "Actions";
+  }
+
+  /* Allow details to wrap properly */
+  .date-cell,
+  .money,
+  .courier-cell,
+  .seller-cell,
+  .status-cell,
+  .detail {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.5;
+  }
+
+  .detail {
+    overflow-wrap: anywhere;
+  }
+
+  .date-cell small {
+    margin-top: 2px;
+  }
+
+  /* Status labels */
+  .pill {
+    justify-self: start;
+  }
+
+  /* Edit and Delete buttons */
+  tbody td:last-child {
+    border-bottom: 0;
+    padding-top: 10px;
+  }
+
+  .row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    white-space: normal;
+  }
+
+  .row-actions .mini {
+    flex: 1;
+    min-width: 70px;
+    padding: 9px;
+    font-size: 12px;
+  }
+
+  /* Closed transactions */
+  .section-title {
+    margin: 22px 0 10px;
+  }
+
+  .section-title h2 {
+    font-size: 16px;
+  }
+
+  .closed-note {
+    line-height: 1.5;
+  }
+
+  /* Add/Edit Order form */
+  .form-grid {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .field.full {
+    grid-column: auto;
+  }
+
+  .modal-backdrop {
+    padding: 8px;
+  }
+
+  .modal {
+    max-height: 95vh;
+    border-radius: 13px;
+  }
+
+  .modal-head,
+  .modal-foot {
+    padding: 12px 14px;
+  }
+
+  /* Empty order messages */
+  .empty {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 12px;
+  }
+}
