@@ -305,3 +305,47 @@
     padding: 20px 12px;
   }
 }
+
+/* ==================================
+   ACTIVE ORDERS - LIGHT BLUE CARDS
+   ================================== */
+
+@media screen and (max-width: 520px) {
+    /* Active Orders table */
+    #activeOrdersTable tbody tr {
+        background-color: #eaf4ff !important;
+        border: 1px solid #c7def5;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(40, 90, 150, 0.08);
+    }
+
+    #activeOrdersTable tbody td {
+        background-color: transparent !important;
+        border-bottom: 1px solid #d8e8f8;
+    }
+
+    #activeOrdersTable tbody td:last-child {
+        border-bottom: none;
+    }
+
+
+    /* ==================================
+       CLOSED TRANSACTIONS - LIGHT GREY
+       ================================== */
+
+    #closedOrdersTable tbody tr {
+        background-color: #f0f1f3 !important;
+        border: 1px solid #d9dce1;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    #closedOrdersTable tbody td {
+        background-color: transparent !important;
+        border-bottom: 1px solid #e0e2e6;
+    }
+
+    #closedOrdersTable tbody td:last-child {
+        border-bottom: none;
+    }
+}
