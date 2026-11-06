@@ -307,45 +307,51 @@
 }
 
 /* ==================================
-   ACTIVE ORDERS - LIGHT BLUE CARDS
+   ORDER CARD COLORS (including mobile)
    ================================== */
+.table-wrap.active-order-panel {
+  background-color: #eaf4ff;
+  border-color: #c7def5;
+}
+.table-wrap.closed-order-panel {
+  background-color: #f0f1f3;
+  border-color: #d9dce1;
+}
 
 @media screen and (max-width: 520px) {
-    /* Active Orders table */
-    #activeOrdersTable tbody tr {
-        background-color: #eaf4ff !important;
-        border: 1px solid #c7def5;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(40, 90, 150, 0.08);
-    }
+  .table-wrap.active-order-panel,
+  .table-wrap.closed-order-panel {
+    background-color: transparent;
+  }
 
-    #activeOrdersTable tbody td {
-        background-color: transparent !important;
-        border-bottom: 1px solid #d8e8f8;
-    }
+  .active-order-panel tbody tr,
+  .active-order-panel tbody tr:hover,
+  .active-order-panel tbody tr:focus-within {
+    background-color: #eaf4ff !important;
+    border-color: #c7def5;
+    box-shadow: 0 2px 6px rgba(40, 90, 150, 0.08);
+  }
 
-    #activeOrdersTable tbody td:last-child {
-        border-bottom: none;
-    }
+  .active-order-panel tbody td {
+    background-color: transparent !important;
+    border-bottom-color: #d8e8f8;
+  }
 
+  .closed-order-panel tbody tr,
+  .closed-order-panel tbody tr:hover,
+  .closed-order-panel tbody tr:focus-within {
+    background-color: #f0f1f3 !important;
+    border-color: #d9dce1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
 
-    /* ==================================
-       CLOSED TRANSACTIONS - LIGHT GREY
-       ================================== */
+  .closed-order-panel tbody td {
+    background-color: transparent !important;
+    border-bottom-color: #e0e2e6;
+  }
 
-    #closedOrdersTable tbody tr {
-        background-color: #f0f1f3 !important;
-        border: 1px solid #d9dce1;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    }
-
-    #closedOrdersTable tbody td {
-        background-color: transparent !important;
-        border-bottom: 1px solid #e0e2e6;
-    }
-
-    #closedOrdersTable tbody td:last-child {
-        border-bottom: none;
-    }
+  .active-order-panel tbody td:last-child,
+  .closed-order-panel tbody td:last-child {
+    border-bottom: none;
+  }
 }
